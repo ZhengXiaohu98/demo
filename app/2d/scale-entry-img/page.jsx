@@ -81,16 +81,16 @@ const HorizontalScroll = () => {
     <div className="overflow-hidden">
       <div className="h-screen" />
       <div className="h-screen flex flex-col justify-center items-center overflow-hidden">
-        <img id="scale-img1" src="/horizontal-scroll/img6.jpg" className="h-[600px]" alt="" />
+        <img id="scale-img1" src="/images/horizontal-scroll/img6.jpg" className="h-[600px]" alt="" />
       </div>
       <div className="h-screen flex flex-col justify-center items-center overflow-hidden" >
-        <img id="scale-img2" src="/horizontal-scroll/img9.jpg" className="h-[600px]" alt="" />
+        <img id="scale-img2" src="/images/horizontal-scroll/img9.jpg" className="h-[600px]" alt="" />
       </div>
       <div className="h-screen flex flex-col justify-center items-center overflow-hidden" >
-        <img id="scale-img3" src="/horizontal-scroll/img7.png" className="h-[600px]" alt="" />
+        <img id="scale-img3" src="/images/horizontal-scroll/img7.png" className="h-[600px]" alt="" />
       </div>
       <div id="sec4" className="h-[100vh] w-screen relative bg-gray-700">
-        <img id="sec4-img" src="/horizontal-scroll/fr-img1.png" className="w-[40%] absolute left-[10%] top-1/2 -translate-y-1/2 z-10" alt="" />
+        <img id="sec4-img" src="/images/horizontal-scroll/fr-img1.png" className="w-[40%] h-auto absolute left-[10%] top-1/2 -translate-y-1/2 z-10" alt="" />
         <div id="sec4-text" className="h-1/3 w-[35%] flex flex-col justify-center gap-4 absolute right-[10%] top-1/2 -translate-y-1/2">
           <p>{"Export files in multiple formats including PDF, PPT, Excel, Word, TXT, CSV, SVG, PNG, JPG, etc."}</p>
           <p>{"Support batch printing with printers of diverse paper sizes and brands, ideal for printing invoices, delivery notes, and more."}</p>

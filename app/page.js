@@ -36,7 +36,6 @@ export default function Home() {
         <h2 className="text-white text-[48px] font-[600]">3D相关</h2>
         <div className="flex flex-row flex-wrap mt-[20px] gap-6">
           <Link href="/3d/3d-scroll" className="px-[24px] py-[12px] rounded-[12px] bg-[#f7f7f7] text-[#555] hover:bg-gray-300 transition duration-300 font-[600] text-[18px]">3D模型与滚动结合</Link>
-          <Link href="/3d/fanruan-summit-hk" className="px-[24px] py-[12px] rounded-[12px] bg-[#f7f7f7] text-[#555] hover:bg-gray-300 transition duration-300 font-[600] text-[18px]">香港大会报名页3D尝试</Link>
 
         </div>
       </div>
