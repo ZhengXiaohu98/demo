@@ -2,7 +2,7 @@
 import * as THREE from 'three'
 import { useRef, useState, useMemo, useEffect, Suspense } from 'react'
 import { Canvas, useFrame, extend } from '@react-three/fiber'
-import { Billboard, Text, TrackballControls, Image as IMG } from '@react-three/drei';
+import { Billboard, Text, TrackballControls, Image as IMG, SpotLight } from '@react-three/drei';
 import { geometry, easing } from 'maath'
 extend({ RoundedPlaneGeometry: geometry.RoundedPlaneGeometry });
 
@@ -57,13 +57,20 @@ const logos = [
   "/images/logos/logo48.png",
   "/images/logos/logo49.png",
   "/images/logos/logo50.png"
-]
+];
+
+const separateArray = (array, chunkSize) => {
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
+}
 
 
 const LogoWall = () => {
   return (
     <div className='overflow-x-hidden'>
-      <div className='h-screen w-screen bg-[#f3f3f3]'/>
       <div className='h-screen w-screen overflow-hidden bg-white'>
         <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 35], fov: 90 }}>
           <fog attach="fog" args={['#202025', 0, 80]} />
@@ -75,7 +82,33 @@ const LogoWall = () => {
           <TrackballControls noZoom />
         </Canvas>
       </div>
-      <div className='h-screen w-screen bg-[#f3f3f3]'/>
+      <div className='h-screen w-screen overflow-hidden bg-white shadow-inner'>
+        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 35], fov: 90 }}>
+          <fog attach="fog" args={['#202025', 0, 80]} />
+
+          <Suspense fallback={null}>
+            {
+              separateArray(logos.slice(0, 48), 12).map((cur, i) => (
+                <Carousel key={i} logoArr={cur} count={12} position={[0, i * 5 - 8, 0]} />
+              ))
+            }
+          </Suspense>
+        </Canvas>
+      </div>
+      <div className='h-screen w-screen overflow-hidden bg-gradient-to-r from-blue-400 to-indigo-400-400 shadow-inner'>
+        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 35], fov: 90 }}>
+          <fog attach="fog" args={['#202025', 0, 80]} />
+          <Suspense fallback={null}>
+            {
+              separateArray(logos.slice(0, 30), 10).map((cur, i) => (
+                <Carousel key={i} count={10} logoArr={cur} position={[0, i * 8 - 8, 0]} />
+              ))
+            }
+            <CarouselVertical logoArr={logos.slice(30, 40)} position={[0, 0, 0]} rotation={[0, 0, Math.PI / 4]} />
+            <CarouselVertical logoArr={logos.slice(40, 50)} position={[0, 0, 0]} rotation={[0, 0, -Math.PI / 4]} />
+          </Suspense>
+        </Canvas>
+      </div>
     </div>
 
   )
@@ -145,4 +178,46 @@ const RotatingGroup = ({ children, rotationSpeed = 0.01 }) => {
     }
   })
   return <group ref={groupRef}>{children}</group>
+}
+
+function Carousel({ radius = 22, count = 10, logoArr, ...props }) {
+  const ref = useRef()
+
+  useFrame((state, delta) => {
+    ref.current.rotation.y += delta * 0.2
+  });
+
+  return (
+    <group ref={ref} {...props}>
+      {logoArr.map((url, i) => (
+        <Logo
+          key={i}
+          url={url}
+          position={[Math.sin((i / count) * Math.PI * 2) * radius, 0, Math.cos((i / count) * Math.PI * 2) * radius]}
+          rotation={[0, Math.PI + (i / count) * Math.PI * 2, 0]}
+        />
+      ))}
+    </group>
+  )
+}
+
+function CarouselVertical({ radius = 20, count = 10, logoArr, ...props }) {
+  const ref = useRef()
+
+  useFrame((state, delta) => {
+    ref.current.rotation.x += delta * 0.2
+  });
+
+  return (
+    <group ref={ref} {...props}>
+      {logoArr.map((url, i) => (
+        <Logo
+          key={i}
+          url={url}
+          position={[0, Math.cos((i / count) * Math.PI * 2) * radius, Math.sin((i / count) * Math.PI * 2) * radius]}
+          rotation={[0, 0, 0]}
+        />
+      ))}
+    </group>
+  )
 }
