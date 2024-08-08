@@ -1,0 +1,20 @@
+{
+  "pages": [
+    {
+      "front": "/images/horizontal-scroll/img1.png",
+      "back": "/images/horizontal-scroll/img2.jpg"
+    },
+    {
+      "front": "/images/horizontal-scroll/img3.jpg",
+      "back": "/images/horizontal-scroll/img4.png"
+    },
+    {
+      "front": "/images/horizontal-scroll/img5.jpg",
+      "back": "/images/horizontal-scroll/img6.jpg"
+    },
+    {
+      "front": "/images/horizontal-scroll/img7.png",
+      "back": "/images/horizontal-scroll/img8.jpg"
+    }
+  ]
+}
