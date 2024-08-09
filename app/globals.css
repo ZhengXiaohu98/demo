@@ -38,3 +38,7 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #999;
 }
+
+.bg-radial-gradient {
+  background: radial-gradient(#4c34e9, #232323 80%);
+}

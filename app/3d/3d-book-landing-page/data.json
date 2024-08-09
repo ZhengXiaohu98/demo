@@ -1,20 +1,19 @@
 {
   "pages": [
     {
-      "front": "/images/horizontal-scroll/img1.png",
-      "back": "/images/horizontal-scroll/img2.jpg"
+      "front": "/images/3d-book/page1.png",
+      "back": "/images/3d-book/page3.png",
+      "pagination": "page1"
     },
     {
-      "front": "/images/horizontal-scroll/img3.jpg",
-      "back": "/images/horizontal-scroll/img4.png"
+      "front": "/images/3d-book/page4.png",
+      "back": "/images/3d-book/page5.png",
+      "pagination": "page2"
     },
     {
-      "front": "/images/horizontal-scroll/img5.jpg",
-      "back": "/images/horizontal-scroll/img6.jpg"
-    },
-    {
-      "front": "/images/horizontal-scroll/img7.png",
-      "back": "/images/horizontal-scroll/img8.jpg"
+      "front": "/images/3d-book/page6.png",
+      "back": "/images/3d-book/page2.png",
+      "pagination": "page3"
     }
   ]
 }

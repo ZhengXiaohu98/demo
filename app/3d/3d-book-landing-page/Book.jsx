@@ -1,7 +1,7 @@
-import { useCursor, useTexture, useHelper, useScroll } from "@react-three/drei";
+import { useCursor, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { easing } from "maath";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { pages } from "./data.json";
 import * as THREE from 'three'
 import { degToRad } from "three/src/math/MathUtils.js";
@@ -11,6 +11,8 @@ const EASING_FAC_FOLD = 0.3;
 const INSIDE_CURVE_STRENGTH = 0.3;
 const OUTSIDE_CURVE_STRENGTH = 0.01;
 const TURNING_CURVE_STRENGTH = 0.09;
+
+const EMISSIVE_COLOR = "#0069ea";
 
 const PAGE_WIDTH = 1.28;
 const PAGE_HEIGHT = 1.71; // 4:3 aspect ratio
@@ -32,7 +34,6 @@ const position = pageGeometry.attributes.position;
 const vertex = new THREE.Vector3();
 const skinIndexes = [];
 const skinWeights = [];
-console.log(position)
 
 for (let i = 0; i < position.count; ++i) {
   vertex.fromBufferAttribute(position, i); // get the vertex
@@ -57,8 +58,8 @@ pageGeometry.setAttribute(
 const pageMaterials = [
   new THREE.MeshStandardMaterial({ color: "#fff" }),
   new THREE.MeshStandardMaterial({ color: "#111" }),
-  new THREE.MeshStandardMaterial({ color: "pink" }),
-  new THREE.MeshStandardMaterial({ color: "blue" })
+  new THREE.MeshStandardMaterial({ color: "#fff" }),
+  new THREE.MeshStandardMaterial({ color: "#fff" })
 ]
 
 pages.forEach((page) => {
@@ -79,8 +80,6 @@ const Page = ({ number, curPage, setCurPage, opened, front, back, ...props }) =>
   const turnedAt = useRef(0);
   const lastOpened = useRef(opened);
 
-  const scroll = useScroll();
-
   const pageSkinnedMesh = useMemo(() => {
     const bones = [];
     for (let i = 0; i <= PAGE_SEGMENTS; ++i) {
@@ -96,14 +95,18 @@ const Page = ({ number, curPage, setCurPage, opened, front, back, ...props }) =>
 
     const materials = [...pageMaterials,
     new THREE.MeshStandardMaterial({
-      color: "#fff",
+      color: "#f1f3f3",
       map: frontPicture,
-      roughness: 0.1
+      roughness: 0.15,
+      emissive: EMISSIVE_COLOR,
+      emissiveIntensity: 0
     }),
     new THREE.MeshStandardMaterial({
-      color: "#fff",
+      color: "#f1f3f3",
       map: backPicture,
-      roughness: 0.1
+      roughness: 0.15,
+      emissive: EMISSIVE_COLOR,
+      emissiveIntensity: 0
     }),
     ];
     const mesh = new THREE.SkinnedMesh(pageGeometry, materials);
@@ -115,12 +118,19 @@ const Page = ({ number, curPage, setCurPage, opened, front, back, ...props }) =>
     return mesh;
   }, [frontPicture, backPicture]);
 
-  useHelper(skinnedMeshRef, THREE.SkeletonHelper, "red");
-
   useFrame((_, delta) => {
     if (!skinnedMeshRef.current) {
       return;
     }
+
+    // control the hover emissive color
+    const emissiveIntensity = highlighted ? 0.3 : 0;
+    skinnedMeshRef.current.material[4].emissiveIntensity =
+      skinnedMeshRef.current.material[5].emissiveIntensity = THREE.MathUtils.lerp(
+        skinnedMeshRef.current.material[4].emissiveIntensity,
+        emissiveIntensity,
+        0.1
+      );
 
     let targetRotation = curPage > number ? -Math.PI / 2 : Math.PI / 2;
     targetRotation += degToRad(number * 0.8);
@@ -167,8 +177,6 @@ const Page = ({ number, curPage, setCurPage, opened, front, back, ...props }) =>
         EASING_FAC,
         delta);
 
-
-
       const foldIntensity = i >= 8 ? Math.sin(i * Math.PI * (1 / bones.length) - 0.5) * turningTime : 0;
       easing.dampAngle(
         target.rotation,
@@ -178,7 +186,7 @@ const Page = ({ number, curPage, setCurPage, opened, front, back, ...props }) =>
         delta
       );
     }
-  })
+  });
 
   return (
     <group
@@ -192,15 +200,15 @@ const Page = ({ number, curPage, setCurPage, opened, front, back, ...props }) =>
         e.stopPropagation();
         setHighlighted(false);
       }}
-      onPointerClick={(e) => {
+      onClick={(e) => {
         e.stopPropagation();
-        setCurPage(opened ? number : number + 1);
+        const scrollPosition = document.documentElement.scrollHeight * ((opened ? number : number + 1) / (pages.length + 1));
+        window.scrollTo({ top: scrollPosition })
         setHighlighted(false);
       }}
     >
       <primitive
         ref={skinnedMeshRef}
-
         object={pageSkinnedMesh}
         position-z={-number * PAGE_DEPTH + curPage * PAGE_DEPTH}
       />
@@ -208,13 +216,14 @@ const Page = ({ number, curPage, setCurPage, opened, front, back, ...props }) =>
   )
 }
 
-export const Book = ({ ...props }) => {
+export const Book = ({ curPage, setCurPage, ...props }) => {
 
-  const [curPage, setCurPage] = useState(0);
-  const scroll = useScroll();
+  useFrame((_, delta) => {
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
 
-  useFrame(() => {
-    setCurPage(Math.floor(scroll.offset / (1 / pages.length)));
+    setCurPage(Math.floor((scrollTop / (scrollHeight - clientHeight)) / (1 / pages.length)));
   })
 
   return (
